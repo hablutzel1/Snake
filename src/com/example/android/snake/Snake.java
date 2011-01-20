@@ -16,10 +16,16 @@
 
 package com.example.android.snake;
 
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Snake: a simple game that everyone can enjoy.
@@ -32,49 +38,81 @@ import android.widget.TextView;
  */
 public class Snake extends Activity {
 
-    private SnakeView mSnakeView;
-    
-    private static String ICICLE_KEY = "snake-view";
+	private SnakeView mSnakeView;
 
-    /**
-     * Called when Activity is first created. Turns off the title bar, sets up
-     * the content views, and fires up the SnakeView.
-     * 
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	private static String ICICLE_KEY = "snake-view";
 
-        setContentView(R.layout.snake_layout);
+	/**
+	 * Called when Activity is first created. Turns off the title bar, sets up
+	 * the content views, and fires up the SnakeView.
+	 * 
+	 */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        mSnakeView = (SnakeView) findViewById(R.id.snake);
-        mSnakeView.setTextView((TextView) findViewById(R.id.text));
+		setContentView(R.layout.snake_layout);
 
-        if (savedInstanceState == null) {
-            // We were just launched -- set up a new game
-            mSnakeView.setMode(SnakeView.READY);
-        } else {
-            // We are being restored
-            Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
-            if (map != null) {
-                mSnakeView.restoreState(map);
-            } else {
-                mSnakeView.setMode(SnakeView.PAUSE);
-            }
-        }
-    }
+		mSnakeView = (SnakeView) findViewById(R.id.snake);
+		mSnakeView.setTextView((TextView) findViewById(R.id.text));
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Pause the game along with the activity
-        mSnakeView.setMode(SnakeView.PAUSE);
-    }
+		if (savedInstanceState == null) {
+			// We were just launched -- set up a new game
+			mSnakeView.setMode(SnakeView.READY);
+		} else {
+			// We are being restored
+			Bundle map = savedInstanceState.getBundle(ICICLE_KEY);
+			if (map != null) {
+				mSnakeView.restoreState(map);
+			} else {
+				mSnakeView.setMode(SnakeView.PAUSE);
+			}
+		}
+	}
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        //Store the game state
-        outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
-    }
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Pause the game along with the activity
+		mSnakeView.setMode(SnakeView.PAUSE);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// Store the game state
+		outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// it creates a menu object from the xml
+		// it just works with menus processed in build time,
+		// it is, menu's that are available through R. ...
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+
+		case R.id.pause:
+
+			//  pause the game
+			mSnakeView.setMode(SnakeView.PAUSE);
+		
+			//  show a toast
+			 Toast.makeText(this,
+			 "Game paused",
+			 Toast.LENGTH_SHORT).show();
+			
+			break;
+
+		}
+		return true;
+	}
 
 }
