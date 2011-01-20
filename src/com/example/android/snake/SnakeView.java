@@ -17,6 +17,7 @@
 package com.example.android.snake;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import android.content.Context;
@@ -54,7 +55,12 @@ public class SnakeView extends TileView {
      * Current direction the snake is headed.
      */
     private int mDirection = NORTH;
-    private int mNextDirection = NORTH;
+
+    private int[] mNextDirectionArray = new int[5]; // an array of up to 5 consecutives directions
+    {
+    	// the first direction
+    	mNextDirectionArray[0] = NORTH;
+    }
     private static final int NORTH = 1;
     private static final int SOUTH = 2;
     private static final int EAST = 3;
@@ -162,7 +168,8 @@ public class SnakeView extends TileView {
         mSnakeTrail.add(new Coordinate(4, 7));
         mSnakeTrail.add(new Coordinate(3, 7));
         mSnakeTrail.add(new Coordinate(2, 7));
-        mNextDirection = NORTH;
+        
+//        mNextDirection = NORTH;
 
         // Two apples to start with
         addRandomApple();
@@ -204,7 +211,7 @@ public class SnakeView extends TileView {
 
         map.putIntArray("mAppleList", coordArrayListToArray(mAppleList));
         map.putInt("mDirection", Integer.valueOf(mDirection));
-        map.putInt("mNextDirection", Integer.valueOf(mNextDirection));
+//        map.putInt("mNextDirection", Integer.valueOf(mNextDirection));
         map.putLong("mMoveDelay", Long.valueOf(mMoveDelay));
         map.putLong("mScore", Long.valueOf(mScore));
         map.putIntArray("mSnakeTrail", coordArrayListToArray(mSnakeTrail));
@@ -240,7 +247,7 @@ public class SnakeView extends TileView {
 
         mAppleList = coordArrayToArrayList(icicle.getIntArray("mAppleList"));
         mDirection = icicle.getInt("mDirection");
-        mNextDirection = icicle.getInt("mNextDirection");
+//        mNextDirection = icicle.getInt("mNextDirection");
         mMoveDelay = icicle.getLong("mMoveDelay");
         mScore = icicle.getLong("mScore");
         mSnakeTrail = coordArrayToArrayList(icicle.getIntArray("mSnakeTrail"));
@@ -281,34 +288,51 @@ public class SnakeView extends TileView {
             }
 
             if (mDirection != SOUTH) {
-                mNextDirection = NORTH;
+            	
+
+            	enqueueDirection(NORTH);
+
+					
+
+            	
+//                mNextDirection = NORTH;
             }
             return (true);
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             if (mDirection != NORTH) {
-                mNextDirection = SOUTH;
+                enqueueDirection(SOUTH);
             }
             return (true);
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
             if (mDirection != EAST) {
-                mNextDirection = WEST;
+            	enqueueDirection(WEST);
             }
             return (true);
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
             if (mDirection != WEST) {
-                mNextDirection = EAST;
+                enqueueDirection(EAST);
             }
             return (true);
         }
 
         return super.onKeyDown(keyCode, msg);
     }
+
+	private void enqueueDirection(int direction) {
+		for (int i = 0; i < mNextDirectionArray.length; i++) {
+			// find the first zero
+			if (mNextDirectionArray[i] == 0) {
+				mNextDirectionArray[i] = direction;
+				break;
+			}
+		}
+	}
 
     /**
      * Sets the TextView that will be used to give information (such as "Game
@@ -447,8 +471,11 @@ public class SnakeView extends TileView {
         // grab the snake by the head
         Coordinate head = mSnakeTrail.get(0);
         Coordinate newHead = new Coordinate(1, 1);
+//        mDirection = mNextDirection;
 
-        mDirection = mNextDirection;
+        
+        // get last direction
+        popQueuedDirection();
 
         switch (mDirection) {
         case EAST: {
@@ -521,6 +548,17 @@ public class SnakeView extends TileView {
         }
 
     }
+
+	private void popQueuedDirection() {
+		for (int i = mNextDirectionArray.length-1; i > 0 ; i--) {
+			if (mNextDirectionArray[i] != 0) {
+				mDirection = mNextDirectionArray[i];
+				  //  delete last direction
+				mNextDirectionArray[i] = 0;
+				break;
+			}
+		}
+	}
 
     /**
      * Simple class containing two integer values and a comparison function.
