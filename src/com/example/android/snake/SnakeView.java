@@ -329,6 +329,7 @@ public class SnakeView extends TileView {
 			// find the first zero
 			if (mNextDirectionArray[i] == 0) {
 				mNextDirectionArray[i] = direction;
+				Log.d("SnakeView", "Direction enqueued: " + direction);
 				break;
 			}
 		}
@@ -555,6 +556,7 @@ public class SnakeView extends TileView {
 				mDirection = mNextDirectionArray[i];
 				  //  delete last direction
 				mNextDirectionArray[i] = 0;
+				Log.d("SnakeView", "Direction popped: " + mDirection);
 				break;
 			}
 		}

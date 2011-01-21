@@ -94,20 +94,32 @@ public class Snake extends Activity {
 		return true;
 
 	}
+	
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		
+
+		//  pause the game
+		mSnakeView.setMode(SnakeView.PAUSE);
+		
+		// TODO do not display the informative text
+		
+		return super.onMenuOpened(featureId, menu);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 
-		case R.id.pause:
+		case R.id.resume:
 
 			//  pause the game
-			mSnakeView.setMode(SnakeView.PAUSE);
+			mSnakeView.setMode(SnakeView.RUNNING);
 		
 			//  show a toast
-			 Toast.makeText(this,
-			 "Game paused",
-			 Toast.LENGTH_SHORT).show();
+//			 Toast.makeText(this,
+//			 "Game paused",
+//			 Toast.LENGTH_SHORT).show();
 			
 			break;
 

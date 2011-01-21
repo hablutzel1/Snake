@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:title="Pause" android:id="@+id/pause"></item>
+<item android:title="Resume Game" android:id="@+id/resume"></item>
 </menu>
