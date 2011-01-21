@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * SnakeView: implementation of a simple game of Snake
@@ -50,6 +51,8 @@ public class SnakeView extends TileView {
     public static final int READY = 1;
     public static final int RUNNING = 2;
     public static final int LOSE = 3;
+    public static final int PAUSE_WITHOUT_TEXT = 4;
+	private static final int WON = 5;
 
     /**
      * Current direction the snake is headed.
@@ -80,6 +83,11 @@ public class SnakeView extends TileView {
      */
     private long mScore = 0;
     private long mMoveDelay = 600;
+    
+    
+//    private long[] mMoveDelayLevels = {50, 80, 120, 170,250, 320, 380, 460, 500, 600};
+    private long[] mMoveDelayLevels = { 500, 600};
+    private long mMoveDelayCurrentLevel = 600;
     /**
      * mLastMove: tracks the absolute time when the snake last moved, and is used
      * to determine if a move should be made based on mMoveDelay.
@@ -102,6 +110,8 @@ public class SnakeView extends TileView {
      * Everyone needs a little randomness in their life
      */
     private static final Random RNG = new Random();
+
+
 
     /**
      * Create a simple handler that we can use to cause animation to happen.  We
@@ -169,13 +179,12 @@ public class SnakeView extends TileView {
         mSnakeTrail.add(new Coordinate(3, 7));
         mSnakeTrail.add(new Coordinate(2, 7));
         
-//        mNextDirection = NORTH;
-
         // Two apples to start with
         addRandomApple();
         addRandomApple();
 
         mMoveDelay = 600;
+        mMoveDelayCurrentLevel = 600;
         mScore = 0;
     }
 
@@ -266,7 +275,7 @@ public class SnakeView extends TileView {
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            if (mMode == READY | mMode == LOSE) {
+            if (mMode == READY | mMode == LOSE | mMode == WON) {
                 /*
                  * At the beginning of the game, or the end of a previous one,
                  * we should start a new game.
@@ -355,7 +364,7 @@ public class SnakeView extends TileView {
         int oldMode = mMode;
         mMode = newMode;
 
-        if (newMode == RUNNING & oldMode != RUNNING) {
+        if ((newMode == RUNNING & oldMode != RUNNING) || newMode == PAUSE_WITHOUT_TEXT) {
             mStatusText.setVisibility(View.INVISIBLE);
             update();
             return;
@@ -372,6 +381,11 @@ public class SnakeView extends TileView {
         if (newMode == LOSE) {
             str = res.getString(R.string.mode_lose_prefix) + mScore
                   + res.getString(R.string.mode_lose_suffix);
+        }
+        
+        if (newMode == WON) {
+            str = res.getString(R.string.mode_won_prefix) + mScore
+                  + res.getString(R.string.mode_won_suffix);
         }
 
         mStatusText.setText(str);
@@ -423,6 +437,7 @@ public class SnakeView extends TileView {
             long now = System.currentTimeMillis();
 
             if (now - mLastMove > mMoveDelay) {
+            	checkAndUpdateLevel();
                 clearTiles();
                 updateWalls();
                 updateSnake();
@@ -434,7 +449,44 @@ public class SnakeView extends TileView {
 
     }
 
-    /**
+    private void checkAndUpdateLevel() {
+    
+    	
+
+
+ 	   mStatusText.setVisibility(View.INVISIBLE);    	
+    	for (int i = 0; i < mMoveDelayLevels.length; i++) {
+        	//  check current level
+    		if(mMoveDelayLevels[i] == mMoveDelayCurrentLevel){
+    			
+    			
+    			
+    		// TODO place logic for won and new level in one conditional
+    			
+	    	//  check if we won
+    		if (i == 0 && mMoveDelayLevels[i] >=  mMoveDelay) {
+//				mStatusText.setText("you won");
+// 	           mStatusText.setVisibility(View.VISIBLE);
+ 	           // set status won
+ 	           setMode(WON);
+ 	           return;
+			}
+
+    			
+    		if( (i != 0 ) && (mMoveDelayLevels[i] == mMoveDelay || (mMoveDelayLevels[i-1] < mMoveDelay && !(mMoveDelay > mMoveDelayCurrentLevel)))) { // we are in the next level
+    	    	// display once for each change    			
+    			// show message    			
+    	           mStatusText.setText(getContext().getResources().getString(R.string.level_label, mMoveDelayLevels.length - i));
+    	           mStatusText.setVisibility(View.VISIBLE);
+    	       	// update if neccesary
+    	           mMoveDelayCurrentLevel = mMoveDelayLevels[i-1];
+    		}
+    		}
+		}
+
+	}
+
+	/**
      * Draws some walls.
      * 
      */
@@ -526,6 +578,8 @@ public class SnakeView extends TileView {
                 
                 mScore++;
                 mMoveDelay *= 0.9;
+                
+                // TODO test if we have reached the next level
 
                 growSnake = true;
             }

@@ -100,9 +100,8 @@ public class Snake extends Activity {
 		
 
 		//  pause the game
-		mSnakeView.setMode(SnakeView.PAUSE);
-		
-		// TODO do not display the informative text
+		//  do not display the informative text
+		mSnakeView.setMode(SnakeView.PAUSE_WITHOUT_TEXT);
 		
 		return super.onMenuOpened(featureId, menu);
 	}

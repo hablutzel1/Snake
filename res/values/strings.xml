@@ -17,8 +17,9 @@
 <resources>
   <string name="mode_ready">Snake\nPress Up To Play</string>
   <string name="mode_pause">Paused\nPress Up To Resume</string>
-  <string name="mode_lose_prefix">Game Over\nScore: </string>
+  <string name="mode_lose_prefix">Game Over\nScore: </string><string name="mode_won_prefix">You won\nScore: </string>
   <string name="mode_lose_suffix">\nPress Up To Play</string>
 
     <string name="snake_layout_text_text"></string>
+<string name="level_label">Level %s</string><string name="mode_won_suffix">\nPress Up To Play Again</string>
 </resources>
