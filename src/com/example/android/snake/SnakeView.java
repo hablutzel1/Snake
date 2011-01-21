@@ -85,8 +85,8 @@ public class SnakeView extends TileView {
     private long mMoveDelay = 600;
     
     
-//    private long[] mMoveDelayLevels = {50, 80, 120, 170,250, 320, 380, 460, 500, 600};
-    private long[] mMoveDelayLevels = { 500, 600};
+    private long[] mMoveDelayLevels = {50, 80, 120, 170,250, 320, 380, 460, 500, 600};
+//    private long[] mMoveDelayLevels = { 500, 600};
     private long mMoveDelayCurrentLevel = 600;
     /**
      * mLastMove: tracks the absolute time when the snake last moved, and is used
@@ -225,6 +225,8 @@ public class SnakeView extends TileView {
 
         map.putIntArray("mAppleList", coordArrayListToArray(mAppleList));
         map.putInt("mDirection", Integer.valueOf(mDirection));
+        
+        // TODO save only the first nextDirection
 //        map.putInt("mNextDirection", Integer.valueOf(mNextDirection));
         map.putLong("mMoveDelay", Long.valueOf(mMoveDelay));
         map.putLong("mScore", Long.valueOf(mScore));
@@ -343,7 +345,7 @@ public class SnakeView extends TileView {
 			// find the first zero
 			if (mNextDirectionArray[i] == 0) {
 				mNextDirectionArray[i] = direction;
-				Log.d("SnakeView", "Direction enqueued: " + direction);
+//				Log.d("SnakeView", "Direction enqueued: " + direction);
 				break;
 			}
 		}
@@ -370,7 +372,10 @@ public class SnakeView extends TileView {
         mMode = newMode;
 
         if ((newMode == RUNNING & oldMode != RUNNING) || newMode == PAUSE_WITHOUT_TEXT) {
-            mStatusText.setVisibility(View.INVISIBLE);
+        	if (mStatusText.getVisibility()  == View.VISIBLE) {
+        		mStatusText.setVisibility(View.INVISIBLE);
+        	}
+
             update();
             return;
         }
@@ -441,7 +446,10 @@ public class SnakeView extends TileView {
         if (mMode == RUNNING) {
             long now = System.currentTimeMillis();
 
-            if (now - mLastMove > mMoveDelay) {
+            long updateDelay = now - mLastMove;
+            Log.d(TAG, "update delay: " + updateDelay);
+            
+			if (updateDelay > mMoveDelay) {
             	checkAndUpdateLevel();
                 clearTiles();
                 updateWalls();
@@ -615,7 +623,7 @@ public class SnakeView extends TileView {
 				mDirection = mNextDirectionArray[i];
 				  //  delete last direction
 				mNextDirectionArray[i] = 0;
-				Log.d("SnakeView", "Direction popped: " + mDirection);
+//				Log.d("SnakeView", "Direction popped: " + mDirection);
 				break;
 			}
 		}
