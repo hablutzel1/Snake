@@ -59,7 +59,7 @@ public class SnakeView extends TileView {
      */
     private int mDirection = NORTH;
 
-    private int[] mNextDirectionArray = new int[5]; // an array of up to 5 consecutives directions
+    private int[] mNextDirectionArray = new int[3]; // an array of up to 5 consecutives directions
     {
     	// the first direction
     	mNextDirectionArray[0] = NORTH;
@@ -178,6 +178,9 @@ public class SnakeView extends TileView {
         mSnakeTrail.add(new Coordinate(4, 7));
         mSnakeTrail.add(new Coordinate(3, 7));
         mSnakeTrail.add(new Coordinate(2, 7));
+
+        Arrays.fill(mNextDirectionArray, 0);
+        mNextDirectionArray[0] = NORTH;
         
         // Two apples to start with
         addRandomApple();
@@ -186,6 +189,8 @@ public class SnakeView extends TileView {
         mMoveDelay = 600;
         mMoveDelayCurrentLevel = 600;
         mScore = 0;
+        
+
     }
 
 
@@ -579,7 +584,7 @@ public class SnakeView extends TileView {
                 mScore++;
                 mMoveDelay *= 0.9;
                 
-                // TODO test if we have reached the next level
+            
 
                 growSnake = true;
             }
@@ -605,7 +610,7 @@ public class SnakeView extends TileView {
     }
 
 	private void popQueuedDirection() {
-		for (int i = mNextDirectionArray.length-1; i > 0 ; i--) {
+		for (int i = mNextDirectionArray.length-1; i >= 0 ; i--) {
 			if (mNextDirectionArray[i] != 0) {
 				mDirection = mNextDirectionArray[i];
 				  //  delete last direction
