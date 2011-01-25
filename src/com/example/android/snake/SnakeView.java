@@ -125,7 +125,7 @@ public class SnakeView extends TileView {
         @Override
         public void handleMessage(Message msg) {
             SnakeView.this.update();
-            SnakeView.this.invalidate();
+            
         }
 
         public void sleep(long delayMillis) {
@@ -447,7 +447,7 @@ public class SnakeView extends TileView {
             long now = System.currentTimeMillis();
 
             long updateDelay = now - mLastMove;
-            Log.d(TAG, "update delay: " + updateDelay);
+//            Log.d(TAG, "update time: " + updateDelay);
             
 			if (updateDelay > mMoveDelay) {
             	checkAndUpdateLevel();
@@ -457,6 +457,9 @@ public class SnakeView extends TileView {
                 updateApples();
                 mLastMove = now;
             }
+			
+			this.invalidate();
+			  
             mRedrawHandler.sleep(mMoveDelay);
         }
 
