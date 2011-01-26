@@ -70,17 +70,40 @@ public class Snake extends Activity {
 		}
 	}
 
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		// Pause the game along with the activity
 		mSnakeView.setMode(SnakeView.PAUSE);
+//		stat
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		// by default the back button finishes the activity, but we can override it
+		
 		// Store the game state
 		outState.putBundle(ICICLE_KEY, mSnakeView.saveState());
+	}
+	
+	
+	
+	public void onBackPressed() {
+	  
+	   Intent setIntent = new Intent(Intent.ACTION_MAIN);
+	   setIntent.addCategory(Intent.CATEGORY_HOME);
+	   setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	   startActivity(setIntent);
+	   return;
+	}
+
+	
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
 	}
 
 	@Override
